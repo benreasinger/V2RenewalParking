@@ -72,7 +72,7 @@ function renderParkingMap() {
     slotDiv.innerHTML = `
       <strong style="font-size: smaller;">Slot ${slot["parking-number"]}</strong><br>
       Car: <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
-      Language: <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
+      <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
     `;
 
     // Add Car button
