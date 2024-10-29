@@ -30,6 +30,23 @@ function initializeParkingSlots() {
   updateDatabase(); // Update Firebase with initial parking slots
 }
 
+// Function to change total parking slots
+function changeTotalSlots(newTotal) {
+  if (isNaN(newTotal) || newTotal <= 0) {
+    alert("Please enter a valid number of parking slots.");
+    return;
+  }
+
+  const confirmation = confirm("Changing the total number of parking slots will remove any car number data from the removed slots. Do you want to proceed?");
+  if (confirmation) {
+    totalSlots = newTotal;
+    initializeParkingSlots();
+    closeModal();
+    localStorage.setItem("parkingSlots", JSON.stringify(parkingSlots));
+    renderParkingMap();
+  }
+}
+
 // Function to update the parking slots in Firebase
 function updateDatabase() {
   firebase.database().ref('parkingSlots').set(parkingSlots)
@@ -114,6 +131,10 @@ function openModal(action, slotNumber = null) {
     modalTitle.textContent = "Enter Car Number";
     carInput.placeholder = "Car Number";
     warningMessage.style.display = "none";
+  } else if (action === 'slotCount') {
+    modalTitle.textContent = "Change Total Parking Slots";
+    carInput.placeholder = "Total Slots";
+    warningMessage.style.display = "block"; // Show warning message
   }
 
   carInput.value = "";
@@ -123,7 +144,7 @@ function openModal(action, slotNumber = null) {
 // Function to close modal
 function closeModal() {
   document.getElementById("carModal").style.display = "none";
-};
+}
 
 // Function to confirm action
 function confirmAction() {
@@ -131,8 +152,10 @@ function confirmAction() {
 
   if (currentModalAction === 'addCar') {
     confirmAddCar(input);
+  } else if (currentModalAction === 'slotCount') {
+    changeTotalSlots(parseInt(input, 10)); // Call changeTotalSlots with the input value
   }
-};
+}
 
 // Initialize the parking slots and set up the database listener
 // Initial setup
@@ -170,7 +193,6 @@ function init() {
       renderParkingMap(); // Render the parking map with the initialized data
     });
 }
-
 
 // Initial setup
 init();
