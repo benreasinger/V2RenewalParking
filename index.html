@@ -16,7 +16,7 @@
   <div class="nav-bar">
     <h1 class="title">Renewal Parking Map</h1>
     <div class="buttons">
-      <button class="changebutton" onclick="openModal('slotCount')">Change Park Slots</button>
+      <button class="changebutton" onclick="openModal('slotCount')">Change Parking Slots</button>
     </div>
   </div>
 
@@ -24,14 +24,23 @@
 
   <div id="carModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h3 id="modalTitle">Enter Car Number</h3>
-      <input type="text" id="carInput" placeholder="Enter here..." maxlength="8">
-      <p id="warningMessage" class="warning-message" style="display: none;">
-        <strong>Warning:</strong> Reducing the number of parking slots will erase any car number data from removed slots.
-      </p>
-      <button id="modalConfirmButton" onclick="confirmAction()">Confirm</button>
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3 id="modalTitle">Enter Car Number</h3>
+        
+        <!-- Language dropdown, initially hidden -->
+        <select id="languageSelect" style="display: none;">
+            <option value="english">English</option>
+            <option value="spanish">Spanish</option>
+        </select>
+        
+        <input type="text" id="carInput" placeholder="Enter here..." maxlength="8">
+        <p id="warningMessage" class="warning-message" style="display: none;">
+            <strong>Warning:</strong> Reducing the number of parking slots will erase any car number data from removed slots.
+        </p>
+        <button id="modalConfirmButton" onclick="confirmAction()">Confirm</button>
     </div>
+</div>
+
   </div>
 </body>
 </html>
