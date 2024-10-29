@@ -111,17 +111,35 @@ function renderParkingMap() {
 }
 
 
-// Function to add a car
 function addCar(parkingNumber, carNumber, language) {
-  const slot = parkingSlots.find(slot => slot["parking-number"] === parkingNumber);
-  if (!slot["car-number"]) {
-    slot["car-number"] = carNumber;
-    slot.language = language; // Store the selected language
-    slot.status = "In-Car"; // Set the newly added car's status to "In-Car"
-    updateDatabase(); // Update database with new car and status
+  // Log current parkingSlots for debugging
+  console.log("Current parkingSlots:", parkingSlots);
+  
+  // Check if car number already exists in a different spot
+  const isDuplicate = parkingSlots.some(slot => slot["car-number"] === carNumber && slot["parking-number"] !== parkingNumber);
+  
+  if (isDuplicate) {
+    alert(`Error: The car number ${carNumber} is already parked in another spot.`);
+    return; // Exit if duplicate found
   }
-  renderParkingMap(); // Re-render the parking map to show the updated slot
+
+  // Find the specific parking slot by parking number
+  const slot = parkingSlots.find(slot => slot["parking-number"] === parkingNumber);
+  
+  if (slot && !slot["car-number"]) {
+    // Assign car number to the empty slot
+    slot["car-number"] = carNumber;
+    slot["language"] = language; // Save language
+    slot.status = "In-Car"; // Update status
+    updateDatabase(); // Save updated parking data
+    renderParkingMap(); // Re-render the map
+  } else {
+    alert("Error: The selected parking spot is already occupied or does not exist.");
+  }
 }
+
+
+
 
 // Function to change the status of a parking slot
 function changeStatus(parkingNumber) {
