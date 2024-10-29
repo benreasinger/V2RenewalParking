@@ -25,30 +25,35 @@ let currentSlotNumber = null;
 function initializeParkingSlots() {
   parkingSlots = Array.from({ length: totalSlots }, (_, i) => ({
     "parking-number": (i + 1).toString(),
-    "car-number": ""
+    "car-number": "",
+    "language": "N/A" // Set default language to N/A
   }));
   updateDatabase(); // Update Firebase with initial parking slots
 }
 
 // Function to change total parking slots
-function changeTotalSlots(newTotal) {
+function confirmChangeSlots() {
+  const newTotal = parseInt(document.getElementById("carInput").value); // Changed to use carInput for new total
+
+  // Validate the input
   if (isNaN(newTotal) || newTotal <= 0) {
     alert("Please enter a valid number of parking slots.");
     return;
   }
 
+  // Confirm the user's intention
   const confirmation = confirm("Changing the total number of parking slots will remove any car number data from the removed slots. Do you want to proceed?");
   if (confirmation) {
-    totalSlots = newTotal;
-    initializeParkingSlots();
-    closeModal();
-    localStorage.setItem("parkingSlots", JSON.stringify(parkingSlots));
-    renderParkingMap();
+    totalSlots = newTotal; // Update the global totalSlots variable
+    initializeParkingSlots(); // Reinitialize parking slots based on the new total
+    closeModal(); // Close the modal
+    renderParkingMap(); // Re-render the parking map to reflect changes
   }
 }
 
 // Function to update the parking slots in Firebase
 function updateDatabase() {
+  // Update Firebase with the current parkingSlots array
   firebase.database().ref('parkingSlots').set(parkingSlots)
     .then(() => console.log("Database updated successfully."))
     .catch((error) => console.error("Error updating database:", error));
@@ -65,8 +70,9 @@ function renderParkingMap() {
     slotDiv.id = `slot-${slot["parking-number"]}`;
 
     slotDiv.innerHTML = `
-      <strong>Slot ${slot["parking-number"]}</strong><br>
-      Car: ${slot["car-number"] || "Available"}
+      <strong style="font-size: smaller;">Slot ${slot["parking-number"]}</strong><br>
+      Car: <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
+      Language: <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
     `;
 
     // Add Car button
@@ -88,7 +94,7 @@ function renderParkingMap() {
 }
 
 // Function to add a car to a specific slot
-function confirmAddCar(carNumber) {
+function confirmAddCar(carNumber, language) {
   if (!carNumber) {
     alert("Please enter a valid car number.");
     return;
@@ -102,7 +108,8 @@ function confirmAddCar(carNumber) {
 
   const slot = parkingSlots.find(slot => slot["parking-number"] === currentSlotNumber);
   if (slot) {
-    slot["car-number"] = carNumber;
+    slot["car-number"] = carNumber; // Update the car number
+    slot["language"] = language; // Save the selected language
     updateDatabase(); // Update the database with the new parkingSlots array
     closeModal();
     renderParkingMap();
@@ -114,32 +121,39 @@ function removeCar(slotNumber) {
   const slot = parkingSlots.find(slot => slot["parking-number"] === slotNumber);
   if (slot && slot["car-number"]) {
     slot["car-number"] = ""; // Clear the car number
+    slot["language"] = "N/A"; // Revert language to N/A
     updateDatabase(); // Update the database
     renderParkingMap();
   }
 }
 
 // Function to open modal
+// Function to open modal
 function openModal(action, slotNumber = null) {
   currentModalAction = action;
   currentSlotNumber = slotNumber;
   const modalTitle = document.getElementById("modalTitle");
   const carInput = document.getElementById("carInput");
+  const languageSelect = document.getElementById("languageSelect"); // Get the language select element
   const warningMessage = document.getElementById("warningMessage");
 
   if (action === 'addCar') {
-    modalTitle.textContent = "Enter Car Number";
-    carInput.placeholder = "Car Number";
-    warningMessage.style.display = "none";
+      modalTitle.textContent = "Enter Car Number";
+      carInput.placeholder = "Car Number";
+      languageSelect.style.display = "block"; // Show the language dropdown
+      warningMessage.style.display = "none";
   } else if (action === 'slotCount') {
-    modalTitle.textContent = "Change Total Parking Slots";
-    carInput.placeholder = "Total Slots";
-    warningMessage.style.display = "block"; // Show warning message
+      modalTitle.textContent = "Change Total Parking Slots";
+      carInput.placeholder = "Total Slots";
+      languageSelect.style.display = "none"; // Hide the language dropdown
+      warningMessage.style.display = "block"; // Show warning message
   }
 
   carInput.value = "";
+  languageSelect.value = "english"; // Reset language selection to default
   document.getElementById("carModal").style.display = "block";
 }
+
 
 // Function to close modal
 function closeModal() {
@@ -148,17 +162,16 @@ function closeModal() {
 
 // Function to confirm action
 function confirmAction() {
-  const input = document.getElementById("carInput").value.trim();
-
   if (currentModalAction === 'addCar') {
-    confirmAddCar(input);
+    const input = document.getElementById("carInput").value.trim();
+    const selectedLanguage = document.getElementById("languageSelect").value; // Get selected language
+    confirmAddCar(input, selectedLanguage); // Pass the language to the confirm function
   } else if (currentModalAction === 'slotCount') {
-    changeTotalSlots(parseInt(input, 10)); // Call changeTotalSlots with the input value
+    confirmChangeSlots(); // Call the function for changing slots
   }
 }
 
 // Initialize the parking slots and set up the database listener
-// Initial setup
 function init() {
   const parkingSlotsRef = firebase.database().ref('parkingSlots');
 
@@ -167,7 +180,11 @@ function init() {
     .then(snapshot => {
       if (snapshot.exists()) {
         // If there is existing data, populate parkingSlots with it
-        parkingSlots = snapshot.val();
+        parkingSlots = snapshot.val().map((slot, index) => ({
+          "parking-number": (index + 1).toString(),
+          "car-number": slot["car-number"] || "",
+          "language": slot["language"] || "N/A" // Ensure language is included
+        }));
       } else {
         // If no data exists, initialize with default slots
         initializeParkingSlots();
@@ -180,7 +197,8 @@ function init() {
         if (data) {
           parkingSlots = data.map((slot, index) => ({
             "parking-number": (index + 1).toString(),
-            "car-number": slot["car-number"] || ""
+            "car-number": slot["car-number"] || "",
+            "language": slot["language"] || "N/A" // Ensure language is included
           }));
           renderParkingMap(); // Re-render the parking map with updated data
         }
