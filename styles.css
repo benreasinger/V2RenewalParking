@@ -55,14 +55,34 @@ body {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  width: 100px;
+  width: 150px;
+  height: auto;
   background-color: #a1cf9b;
   transition: transform 0.3s ease;
 }
-
-.parking-slot.occupied {
-  background-color: #ffccbc;
+/* Color for available spots */
+.available {
+  background-color: #c8e6c9; /* Light green */
 }
+
+/* Color for occupied spots */
+.occupied {
+  background-color: #ffcdd2; /* Light red */
+}
+
+/* Additional status colors */
+.status-in-car {
+  background-color: #bbdefb; /* Light blue */
+}
+
+.status-shopping {
+  background-color: #fff59d; /* Light yellow */
+}
+
+.status-waiting {
+  background-color: #d1c4e9; /* Light purple */
+}
+
 
 .parking-slot.available:hover {
   transform: scale(1.02);
