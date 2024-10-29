@@ -70,8 +70,8 @@ function renderParkingMap() {
     slotDiv.id = `slot-${slot["parking-number"]}`;
 
     slotDiv.innerHTML = `
-      <strong style="font-size: smaller;">Slot ${slot["parking-number"]}</strong><br>
-      Car: <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
+      <strong style="font-size: smaller;">Spot ${slot["parking-number"]}</strong><br>
+      Car # <span style="font-size: smaller;"> ${slot["car-number"] || "Available"}</span><br>
       <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
     `;
 
