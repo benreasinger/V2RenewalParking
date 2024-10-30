@@ -63,10 +63,11 @@ function updateDatabase() {
 // Define the statuses
 const statuses = ["In-Car", "Shopping", "Waiting for Reindeer"];
 
-// Function to render the parking map
 function renderParkingMap() {
   const parkingMap = document.getElementById("parkingMap");
   parkingMap.innerHTML = ""; // Clear existing map
+
+  const isDisplayOnly = window.location.pathname.includes('display-only.html'); // Check if on display-only page
 
   parkingSlots.forEach(slot => {
     const slotDiv = document.createElement("div");
@@ -80,35 +81,35 @@ function renderParkingMap() {
       <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
     `;
 
-    // Add Car button
-    const addButton = document.createElement("button");
-    addButton.textContent = "Add Car";
-    addButton.onclick = () => openModal('addCar', slot["parking-number"]);
-    addButton.disabled = !!slot["car-number"]; // Disable if a car is already parked
+    // Only add buttons if NOT on the display-only page
+    if (!isDisplayOnly) {
+      const addButton = document.createElement("button");
+      addButton.textContent = "Add Car";
+      addButton.onclick = () => openModal('addCar', slot["parking-number"]);
+      addButton.disabled = !!slot["car-number"];
 
-    // Remove Car button
-    const removeButton = document.createElement("button");
-    removeButton.textContent = "Remove Car";
-    removeButton.onclick = () => removeCar(slot["parking-number"]);
-    removeButton.disabled = !slot["car-number"]; // Disable if no car is parked
+      const removeButton = document.createElement("button");
+      removeButton.textContent = "Remove Car";
+      removeButton.onclick = () => removeCar(slot["parking-number"]);
+      removeButton.disabled = !slot["car-number"];
 
-    // Status button
-    const statusButton = document.createElement("button");
-    statusButton.textContent = "Change Status";
-    statusButton.onclick = () => changeStatus(slot["parking-number"]); // Function to change status
-    statusButton.disabled = !slot["car-number"]; // Disable if no car is parked
+      const statusButton = document.createElement("button");
+      statusButton.textContent = "Change Status";
+      statusButton.onclick = () => changeStatus(slot["parking-number"]);
+      statusButton.disabled = !slot["car-number"];
 
-    // Append the appropriate button based on car presence
-    if (slot["car-number"]) {
-      slotDiv.appendChild(removeButton); // Show Remove Car button
-      slotDiv.appendChild(statusButton); // Show Change Status button
-    } else {
-      slotDiv.appendChild(addButton); // Show Add Car button
+      if (slot["car-number"]) {
+        slotDiv.appendChild(removeButton);
+        slotDiv.appendChild(statusButton);
+      } else {
+        slotDiv.appendChild(addButton);
+      }
     }
 
     parkingMap.appendChild(slotDiv);
   });
 }
+
 
 
 function addCar(parkingNumber, carNumber, language) {
