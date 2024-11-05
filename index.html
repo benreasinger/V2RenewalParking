@@ -16,10 +16,10 @@
   <div class="nav-bar">
     <h1 class="title">Renewal Parking Map</h1>
     <div class="buttons">
-      <a  href="display-only.html"><button class="changebutton">Display Spots</button></a>
       <button class="changebutton" onclick="openModal('slotCount')">Change Parking Slots</button>
     </div>
   </div>
+  <input type="text" id="searchInput" placeholder="Search Car #..." oninput="searchCar()" pattern="[\d-]*" title="Only numbers and dashes are allowed">
 
   <div id="parkingMap"></div>
 
