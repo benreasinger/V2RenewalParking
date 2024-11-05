@@ -61,16 +61,16 @@ body {
   transition: transform 0.3s ease;
 }
 /* Color for available spots */
+/* Existing colors */
 .available {
   background-color: #c8e6c9; /* Light green */
 }
 
-/* Color for occupied spots */
 .occupied {
   background-color: #ffcdd2; /* Light red */
 }
 
-/* Additional status colors */
+/* Status colors */
 .status-in-car {
   background-color: #bbdefb; /* Light blue */
 }
@@ -78,6 +78,22 @@ body {
 .status-shopping {
   background-color: #fff59d; /* Light yellow */
 }
+
+/* Correct class name for Fetch-to-shop (CSS is case-sensitive) */
+.status-fetch-to-shop {
+  background-color: #79fdd6; /* Orange-yellow */
+}
+
+/* Add color for Wrapping */
+.status-wrapping {
+  background-color: #d1c4e9; /* Light purple */
+}
+
+/* Add color for Waiting for Reindeer */
+.status-waiting-for-reindeer {
+  background-color: #ffccbc; /* Light coral */
+}
+
 
 .status-waiting {
   background-color: #d1c4e9; /* Light purple */
@@ -137,6 +153,19 @@ input[type="text"]:focus,
 select:focus {
   border: 2px solid #4CAF50; /* Green border on focus */
   outline: none; /* Remove outline */
+}
+
+#searchInput{
+  width: 50%; /* Full width */
+  padding: 12px; /* Padding for modern look */
+  margin: 10px 0; /* Margin for spacing */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
+  font-size: 16px; /* Increase font size */
+  transition: border 0.3s ease; /* Transition for border */
+  align-items: center;
+  display: flex;
+  
 }
 
 /* Close Button Style */
