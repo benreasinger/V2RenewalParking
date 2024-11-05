@@ -81,7 +81,7 @@ body {
 
 /* Correct class name for Fetch-to-shop (CSS is case-sensitive) */
 .status-fetch-to-shop {
-  background-color: #79fdd6; /* Orange-yellow */
+  background-color: #acffe6; /* Orange-yellow */
 }
 
 /* Add color for Wrapping */
@@ -165,7 +165,7 @@ select:focus {
   transition: border 0.3s ease; /* Transition for border */
   align-items: center;
   display: flex;
-  
+
 }
 
 /* Close Button Style */
