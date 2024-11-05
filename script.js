@@ -31,9 +31,16 @@ function initializeParkingSlots() {
   }));
   updateDatabase(); // Update Firebase with initial parking slots
 }
-
+const changeSlotsPassword = "3478";
 // Function to change total parking slots
 function confirmChangeSlots() {
+  const enteredPassword = prompt("Please enter the password to change the number of slots:");
+
+  if (enteredPassword !== changeSlotsPassword) {
+    alert("Incorrect password. Access denied.");
+    return; // Exit if password is incorrect
+  }else{
+
   const newTotal = parseInt(document.getElementById("carInput").value);
 
   // Validate the input
@@ -50,7 +57,7 @@ function confirmChangeSlots() {
     closeModal();
     renderParkingMap();
   }
-}
+}}
 
 // Function to update the parking slots in Firebase
 function updateDatabase() {
@@ -61,54 +68,7 @@ function updateDatabase() {
 }
 
 // Define the statuses
-const statuses = ["In-Car", "Shopping", "Waiting for Reindeer"];
-
-function renderParkingMap() {
-  const parkingMap = document.getElementById("parkingMap");
-  parkingMap.innerHTML = ""; // Clear existing map
-
-  const isDisplayOnly = window.location.pathname.includes('display-only.html'); // Check if on display-only page
-
-  parkingSlots.forEach(slot => {
-    const slotDiv = document.createElement("div");
-    slotDiv.className = `parking-slot ${slot["car-number"] ? "occupied" : "available"} ${slot.status ? `status-${slot.status.toLowerCase().replace(/ /g, '-')}` : ''}`;
-    slotDiv.id = `slot-${slot["parking-number"]}`;
-
-    slotDiv.innerHTML = `
-      <strong style="font-size: smaller;">Spot ${slot["parking-number"]}</strong><br>
-      Status: <span style="font-size: smaller;">${slot["car-number"] ? (slot.status || "N/A") : "N/A"}</span><br>
-      Car # <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
-      <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
-    `;
-
-    // Only add buttons if NOT on the display-only page
-    if (!isDisplayOnly) {
-      const addButton = document.createElement("button");
-      addButton.textContent = "Add Car";
-      addButton.onclick = () => openModal('addCar', slot["parking-number"]);
-      addButton.disabled = !!slot["car-number"];
-
-      const removeButton = document.createElement("button");
-      removeButton.textContent = "Remove Car";
-      removeButton.onclick = () => removeCar(slot["parking-number"]);
-      removeButton.disabled = !slot["car-number"];
-
-      const statusButton = document.createElement("button");
-      statusButton.textContent = "Change Status";
-      statusButton.onclick = () => changeStatus(slot["parking-number"]);
-      statusButton.disabled = !slot["car-number"];
-
-      if (slot["car-number"]) {
-        slotDiv.appendChild(removeButton);
-        slotDiv.appendChild(statusButton);
-      } else {
-        slotDiv.appendChild(addButton);
-      }
-    }
-
-    parkingMap.appendChild(slotDiv);
-  });
-}
+const statuses = ["In-Car", "Fetch-to-shop", "Shopping", "Wrapping" , "Waiting for Reindeer"];
 
 
 
@@ -157,6 +117,54 @@ function changeStatus(parkingNumber) {
   renderParkingMap(); // Re-render the parking map to show updated status
 }
 
+// Function to search for a specific car by its number
+function searchCar() {
+  const searchValue = document.getElementById("searchInput").value.trim();
+  const parkingMap = document.getElementById("parkingMap");
+
+  // If the search input is empty, render the full parking map
+  if (searchValue === "") {
+    renderParkingMap();
+    return;
+  }
+
+  // Find all slots where car-number includes the search value as a substring
+  const matchingSlots = parkingSlots.filter(slot => slot["car-number"] && slot["car-number"].includes(searchValue));
+
+  // Clear the parking map display
+  parkingMap.innerHTML = "";
+
+  // Display only the matching slot(s)
+  matchingSlots.forEach(slot => {
+    const slotDiv = document.createElement("div");
+    slotDiv.className = `parking-slot ${slot["car-number"] ? "occupied" : "available"} ${slot.status ? `status-${slot.status.toLowerCase().replace(/ /g, '-')}` : ''}`;
+    slotDiv.id = `slot-${slot["parking-number"]}`;
+
+    slotDiv.innerHTML = `
+      <strong style="font-size: smaller;">Spot ${slot["parking-number"]}</strong><br>
+      Status: <span style="font-size: smaller;">${slot["car-number"] ? (slot.status || "N/A") : "N/A"}</span><br>
+      Car # <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
+      <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
+    `;
+
+    parkingMap.appendChild(slotDiv);
+  });
+
+  // If no matching slots found, display a message
+  if (matchingSlots.length === 0) {
+    parkingMap.innerHTML = "<p>No matching car found.</p>";
+  }
+}
+
+
+document.getElementById("searchInput").addEventListener("keypress", (e) => {
+  const allowedChars = /^[\d-]*$/;
+  if (!allowedChars.test(e.key)) {
+    e.preventDefault(); // Block input if character is not a digit or dash
+  }
+});
+
+
 // Function to remove a car from a parking slot
 function removeCar(parkingNumber) {
   const slot = parkingSlots.find(slot => slot["parking-number"] === parkingNumber);
@@ -193,6 +201,12 @@ function openModal(action, slotNumber = null) {
   carInput.value = "";
   languageSelect.value = "english"; // Reset language selection to default
   document.getElementById("carModal").style.display = "block";
+
+  carInput.addEventListener("input", () => {
+    carInput.value = carInput.value
+      .replace(/[^0-9-]/g, "") // Remove any character that's not a number or dash
+      .slice(0, 9); // Limit to 9 characters
+  });
 }
 
 // Function to close modal
@@ -218,6 +232,55 @@ function confirmAction() {
   }
 }
 
+function renderParkingMap() {
+  const parkingMap = document.getElementById("parkingMap");
+  parkingMap.innerHTML = ""; // Clear existing map
+
+  // Check if on the display-only page by verifying URL path or a specific query parameter
+  const isDisplayOnly = window.location.pathname.includes('display-only.html'); 
+
+  parkingSlots.forEach(slot => {
+    const slotDiv = document.createElement("div");
+    slotDiv.className = `parking-slot ${slot["car-number"] ? "occupied" : "available"} ${slot.status ? `status-${slot.status.toLowerCase().replace(/ /g, '-')}` : ''}`;
+    slotDiv.id = `slot-${slot["parking-number"]}`;
+
+    // Display parking slot details
+    slotDiv.innerHTML = `
+      <strong style="font-size: smaller;">Spot ${slot["parking-number"]}</strong><br>
+      Status: <span style="font-size: smaller;">${slot["car-number"] ? (slot.status || "N/A") : "N/A"}</span><br>
+      Car # <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
+      <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
+    `;
+
+    // Only add action buttons if NOT on the display-only page
+    if (!isDisplayOnly) {
+      const addButton = document.createElement("button");
+      addButton.textContent = "Add Car";
+      addButton.onclick = () => openModal('addCar', slot["parking-number"]);
+      addButton.disabled = !!slot["car-number"];
+
+      const removeButton = document.createElement("button");
+      removeButton.textContent = "Remove Car";
+      removeButton.onclick = () => removeCar(slot["parking-number"]);
+      removeButton.disabled = !slot["car-number"];
+
+      const statusButton = document.createElement("button");
+      statusButton.textContent = "Change Status";
+      statusButton.onclick = () => changeStatus(slot["parking-number"]);
+      statusButton.disabled = !slot["car-number"];
+
+      if (slot["car-number"]) {
+        slotDiv.appendChild(removeButton);
+        slotDiv.appendChild(statusButton);
+      } else {
+        slotDiv.appendChild(addButton);
+      }
+    }
+
+    parkingMap.appendChild(slotDiv);
+  });
+}
+
 // Initialize the parking slots and set up the database listener
 function init() {
   const parkingSlotsRef = firebase.database().ref('parkingSlots');
@@ -226,16 +289,19 @@ function init() {
   parkingSlotsRef.once('value')
     .then(snapshot => {
       if (snapshot.exists()) {
-        // If there is existing data, populate parkingSlots with it
+        // Populate parkingSlots with Firebase data
         parkingSlots = snapshot.val().map((slot, index) => ({
           "parking-number": (index + 1).toString(),
           ...slot
         }));
       } else {
-        // If no data exists, initialize slots
+        // Initialize slots if no data exists
         initializeParkingSlots();
       }
       renderParkingMap(); // Render the parking map with initial or fetched data
+    })
+    .catch(error => {
+      console.error("Error loading data:", error);
     });
 
   // Set up a listener for real-time updates
