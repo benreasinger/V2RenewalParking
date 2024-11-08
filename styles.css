@@ -156,7 +156,7 @@ select:focus {
 }
 
 #searchInput{
-  width: 50%; /* Full width */
+  width: 50%;
   padding: 12px; /* Padding for modern look */
   margin: 10px 0; /* Margin for spacing */
   border: 1px solid #ccc; /* Light gray border */
@@ -165,6 +165,8 @@ select:focus {
   transition: border 0.3s ease; /* Transition for border */
   align-items: center;
   display: flex;
+  justify-content: center;
+  text-align: center;
 
 }
 
