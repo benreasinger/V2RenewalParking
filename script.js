@@ -100,7 +100,9 @@ function addCar(parkingNumber, carNumber, language) {
 }
 
 
-
+function refresh(){
+  renderParkingMap();
+}
 
 // Function to change the status of a parking slot
 function changeStatus(parkingNumber) {
@@ -116,6 +118,16 @@ function changeStatus(parkingNumber) {
   
   renderParkingMap(); // Re-render the parking map to show updated status
 }
+
+document.getElementById("searchInput").addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    searchCar();
+    e.target.value = ""; // Clear the search box after search
+  } else if (e.target.value === "") {
+    // Re-render all parking slots if search box is empty
+    renderParkingMap();
+  }
+});
 
 // Function to search for a specific car by its number
 function searchCar() {
@@ -164,17 +176,50 @@ document.getElementById("searchInput").addEventListener("keypress", (e) => {
   }
 });
 
+let lastRemovedSlot = null;
 
-// Function to remove a car from a parking slot
 function removeCar(parkingNumber) {
   const slot = parkingSlots.find(slot => slot["parking-number"] === parkingNumber);
-  if (slot["car-number"]) {
-    slot["car-number"] = null; // Clear the car number
-    slot.language = null; // Clear the language when car is removed
-    slot.status = "N/A"; // Set status to N/A when car is removed
-    updateDatabase(); // Update database after removal
+  if (slot && slot["car-number"]) {
+    // Store details of the removed car for undo
+    lastRemovedSlot = { ...slot };
+    
+    // Clear slot details
+    slot["car-number"] = null;
+    slot.language = null;
+    slot.status = "N/A";
+    
+    // Enable the undo button
+    document.getElementById("undoButton").disabled = false;
+    
+    // Update the database and re-render the map
+    updateDatabase();
+    renderParkingMap();
   }
-  renderParkingMap(); // Re-render the parking map to show updated slot
+}
+
+// Function to undo the last car removal
+function undoRemove() {
+  if (lastRemovedSlot) {
+    const slot = parkingSlots.find(s => s["parking-number"] === lastRemovedSlot["parking-number"]);
+    
+    if (slot) {
+      // Restore slot details from last removed car
+      slot["car-number"] = lastRemovedSlot["car-number"];
+      slot.language = lastRemovedSlot.language;
+      slot.status = lastRemovedSlot.status;
+      
+      // Clear the last removed slot after undo
+      lastRemovedSlot = null;
+      
+      // Disable the undo button
+      document.getElementById("undoButton").disabled = true;
+      
+      // Update the database and re-render the map
+      updateDatabase();
+      renderParkingMap();
+    }
+  }
 }
 
 // Function to open modal
@@ -249,7 +294,7 @@ function renderParkingMap() {
       <strong style="font-size: smaller;">Spot ${slot["parking-number"]}</strong><br>
       Status: <span style="font-size: smaller;">${slot["car-number"] ? (slot.status || "N/A") : "N/A"}</span><br>
       Car # <span style="font-size: smaller;">${slot["car-number"] || "Available"}</span><br>
-      <span style="font-size: smaller;">Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
+      <span style="font-size: smaller";>Language:</span> <span style="font-size: smaller;">${slot["language"] || "N/A"}</span>
     `;
 
     // Only add action buttons if NOT on the display-only page
