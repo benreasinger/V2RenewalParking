@@ -39,6 +39,28 @@ body {
   cursor: pointer;
 }
 
+#refresh {
+  padding: 5px;
+  margin-top: 10px;
+  /* font-size: 1em; */
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: hide;
+}
+
+#undoButton{
+  padding: 5px;
+  margin-top: 10px;
+  /* font-size: em; */
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .changebutton:hover {
   background-color: #45a049;
 }
@@ -105,7 +127,12 @@ body {
 }
 
 button {
-  margin-top: 5px;
+  /* margin-top: 5px; */
+  /* display: flex;
+  align-items: center;
+  justify-content: ;
+  flex-direction: row; */
+  margin: 8px;
   padding: 5px;
   cursor: pointer;
   border-radius: 7px;
