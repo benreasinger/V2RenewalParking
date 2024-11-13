@@ -1,14 +1,4 @@
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDbs6UgbaxuxKZyG3v464lkeEtMJQbZ6-4",
-  authDomain: "renewalparking.firebaseapp.com",
-  databaseURL: "https://renewalparking-default-rtdb.firebaseio.com",
-  projectId: "renewalparking",
-  storageBucket: "renewalparking.appspot.com",
-  messagingSenderId: "398724226058",
-  appId: "1:398724226058:web:cfb4d70283c546944d13f3",
-  measurementId: "G-SGV7YXDJ8X"
-};
+
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
