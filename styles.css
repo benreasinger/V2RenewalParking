@@ -97,6 +97,12 @@ body {
   background-color: #bbdefb; /* Light blue */
 }
 
+.status-sent-to-registration{
+  background-color: #52489c;
+  color:white;
+}
+
+
 .status-shopping {
   background-color: #fff59d; /* Light yellow */
 }
