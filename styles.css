@@ -29,18 +29,20 @@ body {
 }
 
 .changebutton {
-  padding: 10px;
+  padding: 3px;
   margin-top: 10px;
-  font-size: 1em;
+  /* font-size: 1em; */
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  display: hide;
+
 }
 
 #refresh {
-  padding: 5px;
+  padding: 10px;
   margin-top: 10px;
   /* font-size: 1em; */
   background-color: #4CAF50;
@@ -52,7 +54,7 @@ body {
 }
 
 #undoButton{
-  padding: 5px;
+  padding: 10px;
   margin-top: 10px;
   /* font-size: em; */
   background-color: #4CAF50;
@@ -95,13 +97,13 @@ body {
 /* Status colors */
 .status-in-car {
   background-color: #bbdefb; /* Light blue */
+
 }
 
 .status-sent-to-registration{
   background-color: #52489c;
   color:white;
 }
-
 
 .status-shopping {
   background-color: #fff59d; /* Light yellow */
@@ -225,3 +227,21 @@ select:focus {
   font-weight: bold;
 }
 
+/* Stats Container */
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Individual Stat Styling */
+.stat {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
